@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Status</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            background: #0a0a0f;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #007aff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="spinner"></div>
+
+    <script>
+        function handleClose() {
+            // 1. Try closing native WebApp if available
+            try {
+                if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.close();
+                }
+            } catch (e) {}
+
+            // 2. Try programmatically closing the window
+            try {
+                window.close();
+            } catch (e) {}
+
+            // 3. Deep link back to the correct Telegram Bot
+            const urlParams = new URLSearchParams(window.location.search);
+            const botUsername = urlParams.get('bot') || 'abiyclient_bot';
+            
+            try {
+                window.location.replace("tg://resolve?domain=" + botUsername + "&startapp=open");
+            } catch (e) {
+                window.location.replace("https://t.me/" + botUsername + "?startapp=open");
+            }
+        }
+
+        // Execute immediately
+        handleClose();
+    </script>
+</body>
+</html>

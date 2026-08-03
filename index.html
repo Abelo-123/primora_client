@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <meta name="description" content="Paxyo SMM — Social Media Marketing Panel. Buy followers, likes, views and more." />
+  <title>Paxyo SMM</title>
+
+  <!-- Preconnect to Google Fonts for faster font loading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- Load Inter font with display=swap (non-blocking) -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    media="print" onload="this.media='all'" />
+  <noscript>
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  </noscript>
+
+  <!-- Font Awesome is now bundled locally from @fortawesome/fontawesome-free in index.tsx -->
+
+  <!-- DNS prefetch for API domain -->
+  <link rel="dns-prefetch" href="https://paxyo.com" />
+  <link rel="preconnect" href="https://paxyo.com" />
+
+  <!-- Inline critical CSS: instant dark background + loading indicator -->
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0a0a0f;
+      overflow: hidden;
+    }
+
+    #root {
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+    }
+
+    #root:empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #root:empty::after {
+      content: '';
+      width: 24px;
+      height: 24px;
+      border: 2.5px solid #222;
+      border-top-color: #3498db;
+      border-radius: 50%;
+      animation: _s .6s linear infinite;
+    }
+
+    @keyframes _s {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+  <script type="module" crossorigin src="./assets/index-D6Il7MXi.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/react-vendor-DI64tbEZ.js">
+  <link rel="modulepreload" crossorigin href="./assets/tma-ui-01c1dbWG.js">
+  <link rel="modulepreload" crossorigin href="./assets/tma-sdk-D3PRR0yZ.js">
+  <link rel="stylesheet" crossorigin href="./assets/tma-ui-COe9AJ4J.css">
+  <link rel="stylesheet" crossorigin href="./assets/index-KsulALTI.css">
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://js.chapa.co/v1/inline.js" defer></script>
+</body>
+
+</html>
