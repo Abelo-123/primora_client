@@ -6,34 +6,77 @@
     <title>Payment Status</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
             background: #0a0a0f;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 24px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            text-align: center;
         }
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top-color: #007aff;
+        .icon-box {
+            width: 72px;
+            height: 72px;
+            background: rgba(0, 200, 83, 0.15);
+            border: 2px solid #00c853;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin-bottom: 20px;
+            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes pop {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        h2 {
+            margin: 0 0 8px 0;
+            font-size: 22px;
+            font-weight: 700;
+        }
+        p {
+            color: #a0a0ab;
+            font-size: 14px;
+            margin: 0 0 24px 0;
+            line-height: 1.4;
+        }
+        .btn {
+            background: #007aff;
+            color: #ffffff;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+        .btn:active {
+            transform: scale(0.97);
+            opacity: 0.9;
         }
     </style>
 </head>
 <body>
-    <div class="spinner"></div>
+    <div class="icon-box">✓</div>
+    <h2>Payment Completed</h2>
+    <p>Closing window and returning to app...</p>
+    <a id="returnBtn" href="#" class="btn" style="display: none;">Return to Bot App</a>
 
     <script>
-        function handleClose() {
+        function closeWindow() {
             // 1. Try closing native WebApp if available
             try {
                 if (window.Telegram && window.Telegram.WebApp) {
@@ -41,24 +84,32 @@
                 }
             } catch (e) {}
 
-            // 2. Try programmatically closing the window
+            // 2. Try programmatically closing window
             try {
                 window.close();
             } catch (e) {}
-
-            // 3. Deep link back to the correct Telegram Bot
-            const urlParams = new URLSearchParams(window.location.search);
-            const botUsername = urlParams.get('bot') || 'abiyclient_bot';
-            
-            try {
-                window.location.replace("tg://resolve?domain=" + botUsername + "&startapp=open");
-            } catch (e) {
-                window.location.replace("https://t.me/" + botUsername + "?startapp=open");
-            }
         }
 
-        // Execute immediately
-        handleClose();
+        // Execute immediately to close popup overlay
+        closeWindow();
+        setTimeout(closeWindow, 300);
+        setTimeout(closeWindow, 800);
+
+        // Fallback for standalone external browser windows where automatic window.close() is blocked
+        const urlParams = new URLSearchParams(window.location.search);
+        const botUsername = urlParams.get('bot') || 'testtyer_bot';
+        const returnBtn = document.getElementById('returnBtn');
+
+        setTimeout(function() {
+            returnBtn.style.display = 'inline-block';
+            returnBtn.onclick = function(e) {
+                e.preventDefault();
+                closeWindow();
+                setTimeout(function() {
+                    window.location.href = "tg://resolve?domain=" + botUsername + "&startapp=open";
+                }, 300);
+            };
+        }, 1200);
     </script>
 </body>
 </html>
