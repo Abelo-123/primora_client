@@ -72,21 +72,12 @@
 <body>
     <div class="icon-box">✓</div>
     <h2>Payment Completed</h2>
-    <p>Returning to Telegram...</p>
-    <a id="returnBtn" href="#" class="btn">Return to Bot App</a>
+    <p>Closing window and returning to app...</p>
+    <button id="closeBtn" class="btn" style="display: none;">Done / Return to App</button>
 
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const botUsername = urlParams.get('bot') || 'Primora444_bot';
-        const tmeUrl = 'https://t.me/' + botUsername + '?startapp=open';
-        const returnBtn = document.getElementById('returnBtn');
-
-        if (returnBtn) {
-            returnBtn.href = tmeUrl;
-        }
-
-        function returnToTelegram() {
-            // 1. WebApp SDK Close
+        function forceCloseWindow() {
+            // 1. Telegram WebApp JS SDK
             try {
                 if (window.Telegram && window.Telegram.WebApp) {
                     window.Telegram.WebApp.ready();
@@ -94,14 +85,14 @@
                 }
             } catch (e) {}
 
-            // 2. Telegram Webview Proxy (Android/iOS native app webview)
+            // 2. Telegram Webview Proxy (Android / iOS native app webview)
             try {
                 if (window.TelegramWebviewProxy && window.TelegramWebviewProxy.postEvent) {
                     window.TelegramWebviewProxy.postEvent('web_app_close', 'null');
                 }
             } catch (e) {}
 
-            // 3. Parent postMessage (Telegram Web)
+            // 3. Parent postMessage (Telegram Web client)
             try {
                 if (window.parent && window.parent.postMessage) {
                     window.parent.postMessage(JSON.stringify({ eventType: 'web_app_close', eventData: '' }), '*');
@@ -111,23 +102,29 @@
             // 4. Standard window close
             try { window.close(); } catch (e) {}
             try { self.close(); } catch (e) {}
-
-            // 5. Universal App Link redirect (HTTPS t.me link - NO browser permission prompt!)
-            try {
-                window.location.replace(tmeUrl);
-            } catch (e) {}
         }
 
-        // Trigger automatically immediately
-        returnToTelegram();
-        document.addEventListener('DOMContentLoaded', returnToTelegram);
+        // Run immediately when script parses
+        forceCloseWindow();
 
-        if (returnBtn) {
-            returnBtn.onclick = function(e) {
-                e.preventDefault();
-                returnToTelegram();
-            };
-        }
+        // Run repeatedly on load and DOM ready
+        document.addEventListener('DOMContentLoaded', forceCloseWindow);
+        window.addEventListener('load', forceCloseWindow);
+
+        // Continuous closing attempts during transition
+        const intervalId = setInterval(forceCloseWindow, 100);
+        setTimeout(function() { clearInterval(intervalId); }, 2000);
+
+        // Fallback: Only show a manual button if window remains open after 1.5s
+        const closeBtn = document.getElementById('closeBtn');
+        setTimeout(function() {
+            if (closeBtn) {
+                closeBtn.style.display = 'inline-block';
+                closeBtn.onclick = function() {
+                    forceCloseWindow();
+                };
+            }
+        }, 1500);
     </script>
 </body>
 </html>
