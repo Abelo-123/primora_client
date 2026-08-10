@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Status</title>
+    <title>Payment Completed</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -73,43 +73,58 @@
     <div class="icon-box">✓</div>
     <h2>Payment Completed</h2>
     <p>Closing window and returning to app...</p>
-    <a id="returnBtn" href="#" class="btn" style="display: none;">Return to Bot App</a>
+    <button id="closeBtn" class="btn" style="display: none;">Done / Return to App</button>
 
     <script>
-        function closeWindow() {
-            // 1. Try closing native WebApp if available
+        function forceCloseWindow() {
+            // 1. Telegram WebApp JS SDK
             try {
                 if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.ready();
                     window.Telegram.WebApp.close();
                 }
             } catch (e) {}
 
-            // 2. Try programmatically closing window
+            // 2. Telegram Webview Proxy (Android / iOS native app webview)
             try {
-                window.close();
+                if (window.TelegramWebviewProxy && window.TelegramWebviewProxy.postEvent) {
+                    window.TelegramWebviewProxy.postEvent('web_app_close', 'null');
+                }
             } catch (e) {}
+
+            // 3. Parent postMessage (Telegram Web client)
+            try {
+                if (window.parent && window.parent.postMessage) {
+                    window.parent.postMessage(JSON.stringify({ eventType: 'web_app_close', eventData: '' }), '*');
+                }
+            } catch (e) {}
+
+            // 4. Standard window close
+            try { window.close(); } catch (e) {}
+            try { self.close(); } catch (e) {}
         }
 
-        // Execute immediately to close popup overlay
-        closeWindow();
-        setTimeout(closeWindow, 300);
-        setTimeout(closeWindow, 800);
+        // Run immediately when script parses
+        forceCloseWindow();
 
-        // Fallback for standalone external browser windows where automatic window.close() is blocked
-        const urlParams = new URLSearchParams(window.location.search);
-        const botUsername = urlParams.get('bot') || 'Primora444_bot';
-        const returnBtn = document.getElementById('returnBtn');
+        // Run repeatedly on load and DOM ready
+        document.addEventListener('DOMContentLoaded', forceCloseWindow);
+        window.addEventListener('load', forceCloseWindow);
 
+        // Continuous closing attempts during transition
+        const intervalId = setInterval(forceCloseWindow, 100);
+        setTimeout(function() { clearInterval(intervalId); }, 2000);
+
+        // Fallback: Only show a manual button if window remains open after 1.5s
+        const closeBtn = document.getElementById('closeBtn');
         setTimeout(function() {
-            returnBtn.style.display = 'inline-block';
-            returnBtn.onclick = function(e) {
-                e.preventDefault();
-                closeWindow();
-                setTimeout(function() {
-                    window.location.href = "tg://resolve?domain=" + botUsername + "&startapp=open";
-                }, 300);
-            };
-        }, 1200);
+            if (closeBtn) {
+                closeBtn.style.display = 'inline-block';
+                closeBtn.onclick = function() {
+                    forceCloseWindow();
+                };
+            }
+        }, 1500);
     </script>
 </body>
 </html>
