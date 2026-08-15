@@ -1216,7 +1216,7 @@ Love this!`,value:z,onChange:De=>j(De.target.value),rows:5,style:{width:"100%",p
                                         
                                         <p style="margin-bottom: 12px;"><strong>11. Account Suspension & Termination</strong><br>Primora reserves the right to suspend or terminate accounts that violate these terms or engage in suspicious activity.<br><br>No refunds will be provided in such cases.</p>
                                         
-                                        <p style="margin-bottom: 12px;"><strong>12. Limitation of Liability</strong><br>Primora is not responsible for:<br>- Any loss of profits, data, or business opportunities<br>- Social media account restrictions or bans<br>- Any indirect damages resulting from service use<br><br>All services are used at the user's own risk.</p>
+                                        <p style="margin-bottom: 12px;"><strong>12. Limitation of Liability</strong><br>Primora is not responsible for:<br>- Any loss of profits, data, or business opportunities<br>- Any indirect damages resulting from service use<br><br>All services are used at the user's own risk.</p>
                                         
                                         <p style="margin-bottom: 12px;"><strong>13. Service Availability</strong><br>Primora aims to provide continuous service but does not guarantee uninterrupted operation. Temporary downtime may occur due to maintenance or technical issues.</p>
                                         
