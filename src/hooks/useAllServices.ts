@@ -25,8 +25,8 @@ export function useAllServices(forceRefresh = false) {
                  custom_description: s.custom_description,
              }));
         },
-        initialData: appServices.length > 0 ? appServices : undefined,
         placeholderData: (prev) => prev || (appServices.length > 0 ? appServices : undefined),
-        staleTime: 5 * 60 * 1000,
+        staleTime: 0,
+        refetchOnMount: 'always',
     });
 }

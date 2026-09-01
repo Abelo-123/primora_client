@@ -6,7 +6,7 @@ import { useApp } from '../context/AppContext';
 export function useCategories(platform: string) {
     const { services } = useApp();
 
-    // Derive instant fallback categories from in-memory services (0ms latency)
+    // Instant in-memory fallback categories from AppContext services (0ms latency)
     const derivedFromServices = useMemo(() => {
         if (!platform || !services || services.length === 0) return [];
         if (platform === 'top') return ['Top Services'];
@@ -28,12 +28,12 @@ export function useCategories(platform: string) {
                 const res = await getCategories(platform);
                 if (res && res.length > 0) return res;
             } catch (e) {
-                console.warn(`[useCategories] Fetch failed for platform ${platform}, using derived fallback`);
+                console.warn(`[useCategories] Fetch failed for platform ${platform}, using fallback`);
             }
             return derivedFromServices;
         },
-        initialData: derivedFromServices.length > 0 ? derivedFromServices : undefined,
         placeholderData: (prev) => prev || (derivedFromServices.length > 0 ? derivedFromServices : undefined),
-        staleTime: 5 * 60 * 1000, // 5 minutes cache for instant loading
+        staleTime: 0, // Always revalidate in background to fetch latest live DB data
+        refetchOnMount: 'always',
     });
 }

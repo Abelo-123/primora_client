@@ -52,14 +52,14 @@ export function useCategoryServices(category?: string, ids?: number[], forceRefr
 
                 if (transformed.length > 0) return transformed;
             } catch (e) {
-                console.warn(`[useCategoryServices] Fetch failed for category ${category}, using derived fallback`);
+                console.warn(`[useCategoryServices] Live fetch failed for ${category}, using fallback`);
             }
 
             return derivedServices;
         },
-        initialData: derivedServices.length > 0 ? derivedServices : undefined,
         placeholderData: (prev) => prev || (derivedServices.length > 0 ? derivedServices : undefined),
         enabled: !!category || !!(ids && ids.length > 0),
-        staleTime: 5 * 60 * 1000, // 5 minutes cache for 0ms instant loading
+        staleTime: 0, // Always revalidate in background to fetch latest live DB data
+        refetchOnMount: 'always',
     });
 }

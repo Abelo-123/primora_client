@@ -80,7 +80,7 @@ export function CategoryModal({ platform, onSelect, onClose }: Props) {
                     />
                 </div>
                 <List>
-                    {loading ? (
+                    {loading && categories.length === 0 ? (
                         <Section>
                             {[1, 2, 3, 4, 5].map(i => (
                                 <div key={i} className="skeleton-modal-card">
