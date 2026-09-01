@@ -1,8 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { getServices } from '../api';
 import type { Service } from '../types';
+import { useApp } from '../context/AppContext';
 
 export function useAllServices(forceRefresh = false) {
+    const { services: appServices } = useApp();
+
     return useQuery<Service[]>({
         queryKey: ['services', 'all', forceRefresh],
         queryFn: async () => {
@@ -22,6 +25,8 @@ export function useAllServices(forceRefresh = false) {
                  custom_description: s.custom_description,
              }));
         },
-        staleTime: 3000, // 3 seconds so new database settings trigger instant skeleton re-sync
+        initialData: appServices.length > 0 ? appServices : undefined,
+        placeholderData: (prev) => prev || (appServices.length > 0 ? appServices : undefined),
+        staleTime: 5 * 60 * 1000,
     });
 }

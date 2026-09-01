@@ -379,7 +379,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 ]);
                 setIsSyncingServices(false);
 
-                // 2c. Priority 3: User Activity & History (orders, deposits, alerts)
+                // 2c. Background Pre-fetch Categories for all social media platforms
+                const platforms = ['telegram', 'instagram', 'tiktok', 'youtube', 'facebook', 'twitter', 'other'];
+                platforms.forEach(platform => {
+                    queryClient.prefetchQuery({
+                        queryKey: ['categories', platform],
+                        queryFn: () => api.getCategories(platform),
+                        staleTime: 5 * 60 * 1000,
+                    }).catch(() => {});
+                });
+
+                // 2d. Priority 3: User Activity & History (orders, deposits, alerts)
                 if (initData) {
                     refreshDeposits();
                     refreshOrders();
