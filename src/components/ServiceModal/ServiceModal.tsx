@@ -126,9 +126,6 @@ export function ServiceModal({ category, recommendedIds, onSelect, onClose }: Pr
                                     >
                                         <div className="modal-item-main">
                                             <div className="modal-item-name">{svc.name}</div>
-                                            <div style={{ fontSize: '11px', color: 'var(--accent, #00f5d4)', opacity: 0.9, marginTop: '3px', fontFamily: 'monospace' }}>
-                                                🧮 Formula: {formula.perThousandEquation}
-                                            </div>
                                         </div>
                                         <div className="modal-item-id">ID: {svc.id}</div>
                                         <div className="modal-item-price">

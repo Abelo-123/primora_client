@@ -466,51 +466,7 @@ export function OrderPage() {
                         </span>
                     </div>
 
-                    {priceFormula && (
-                        <div style={{
-                            marginTop: '10px',
-                            padding: '12px 14px',
-                            borderRadius: '12px',
-                            background: 'rgba(0, 245, 212, 0.05)',
-                            border: '1px solid rgba(0, 245, 212, 0.2)',
-                            color: 'var(--tg-theme-text-color, #fff)',
-                            fontSize: '12px',
-                            fontFamily: 'monospace'
-                        }}>
-                            <div style={{ fontWeight: 700, color: 'var(--accent, #00f5d4)', marginBottom: '6px', fontSize: '13px' }}>
-                                🧮 Singular Numerical Price Equation (Debug)
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '3px 0', opacity: 0.85 }}>
-                                <span>• Factor A (Base Provider Rate/1k):</span>
-                                <span>{formatETB(priceFormula.providerRate)}</span>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '3px 0', opacity: 0.85 }}>
-                                <span>• Factor B (Primora Admin Margin):</span>
-                                <span>× {priceFormula.adminMargin.toFixed(2)}x</span>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '3px 0', opacity: 0.85 }}>
-                                <span>• Factor C (Reseller Multiplier):</span>
-                                <span>× {priceFormula.resellerMultiplier.toFixed(2)}x</span>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '3px 0', color: 'var(--accent)', fontWeight: 600 }}>
-                                <span>• Rate per 1000 (A × B × C):</span>
-                                <span>{formatETB(priceFormula.finalRate)}</span>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '3px 0', opacity: 0.85 }}>
-                                <span>• Factor D (Quantity Units = Qty ÷ 1k):</span>
-                                <span>× {priceFormula.unitFactor}</span>
-                            </div>
-                            {discountPercent > 0 && (
-                                <div style={{ display: 'flex', justifyContent: 'space-between', margin: '3px 0', color: '#00d68f' }}>
-                                    <span>• Holiday Discount ({discountPercent}%):</span>
-                                    <span>- {priceFormula.discountAmount.toFixed(4)} ETB</span>
-                                </div>
-                            )}
-                            <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', marginTop: '8px', paddingTop: '6px', color: '#00f5d4', fontWeight: 'bold', wordBreak: 'break-all' }}>
-                                Formula (A × B × C × D): {priceFormula.totalChargeEquation}
-                            </div>
-                        </div>
-                    )}
+
 
                     <Button
                         size="l"
