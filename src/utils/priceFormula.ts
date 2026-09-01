@@ -24,21 +24,23 @@ export function calculatePriceFormula(
     discountPercent = 0,
     adminMarginInput = 90
 ): PriceFormulaResult {
-    const finalRate = serviceRate;
     const resellerMultiplier = rateMultiplierInput > 0 ? rateMultiplierInput : 1;
     const rawAdminMargin = adminMarginInput > 0 ? adminMarginInput : 90;
     
     // FACTOR B = ((factor b / 100) + 1)
     const adminMargin = (rawAdminMargin / 100) + 1;
     
-    // Derive Provider Base Rate (Factor A) from original_rate if present, or un-dense from finalRate
-    const providerRate = originalRateInput && originalRateInput > 0 && originalRateInput !== finalRate
+    // Derive Provider Base Rate (Factor A) from original_rate if present, or un-dense from serviceRate
+    const providerRate = originalRateInput && originalRateInput > 0
         ? originalRateInput
-        : (finalRate / (adminMargin * resellerMultiplier));
+        : (serviceRate / resellerMultiplier);
+
+    // Final Rate per 1k = Factor A × Factor B × Factor C
+    const finalRate = providerRate * adminMargin * resellerMultiplier;
 
     const unitFactor = quantity / 1000;
     const unitPrice = finalRate / 1000;
-    const subtotal = providerRate * adminMargin * resellerMultiplier * unitFactor;
+    const subtotal = finalRate * unitFactor;
     const discountAmount = discountPercent > 0 ? subtotal * (discountPercent / 100) : 0;
     const finalTotal = subtotal - discountAmount;
 

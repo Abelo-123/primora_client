@@ -60,12 +60,6 @@ export function OrderPage() {
         return parseInt(quantity, 10) || 0;
     }, [selectedService, quantity, comments, showComments]);
 
-    const totalCharge = useMemo(() => {
-        if (!selectedService || effectiveQuantity <= 0) return 0;
-        const original = (effectiveQuantity / 1000) * selectedService.rate;
-        return discountPercent > 0 ? original * (1 - (discountPercent / 100)) : original;
-    }, [selectedService, effectiveQuantity, discountPercent]);
-
     const priceFormula = useMemo(() => {
         if (!selectedService) return null;
         return calculatePriceFormula(
@@ -77,6 +71,11 @@ export function OrderPage() {
             adminMargin || 1
         );
     }, [selectedService, rateMultiplier, adminMargin, effectiveQuantity, discountPercent]);
+
+    const totalCharge = useMemo(() => {
+        if (!selectedService || effectiveQuantity <= 0 || !priceFormula) return 0;
+        return priceFormula.finalTotal;
+    }, [selectedService, effectiveQuantity, priceFormula]);
 
 
 
@@ -378,7 +377,7 @@ export function OrderPage() {
                         <div className="order-details-card__row">
                             <span>Rate per 1000</span>
                             <span className="bold highlight">
-                                {isSyncingServices ? <TextSkeleton width={60} height={14} /> : formatETB(selectedService.rate)}
+                                {isSyncingServices ? <TextSkeleton width={60} height={14} /> : formatETB(priceFormula?.finalRate ?? selectedService.rate)}
                             </span>
                         </div>
                     </div>

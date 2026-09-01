@@ -132,7 +132,7 @@ export function ServiceModal({ category, recommendedIds, onSelect, onClose }: Pr
                                         </div>
                                         <div className="modal-item-id">ID: {svc.id}</div>
                                         <div className="modal-item-price">
-                                            {showRateSkeleton ? <TextSkeleton width={45} height={12} /> : formatETB(svc.rate)} <span style={{ fontSize: '10px', opacity: 0.8 }}>/1000</span>
+                                            {showRateSkeleton ? <TextSkeleton width={45} height={12} /> : formatETB(formula.finalRate)} <span style={{ fontSize: '10px', opacity: 0.8 }}>/1000</span>
                                         </div>
                                     </div>
                                 );
