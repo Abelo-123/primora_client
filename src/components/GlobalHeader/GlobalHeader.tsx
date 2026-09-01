@@ -33,10 +33,10 @@ export function GlobalHeader({ onSearchClick, onNotificationClick }: Props) {
                         </span>
                     </div>
                     <div className="global-header__balance">
-                        {isSyncingBalance ? (
+                        {isSyncingBalance || user?.balance == null ? (
                             <BadgeSkeleton width={72} height={18} />
                         ) : (
-                            user ? `${Number(user.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ETB` : '0.00 ETB'
+                            `${Number(user.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ETB`
                         )}
                     </div>
                 </div>

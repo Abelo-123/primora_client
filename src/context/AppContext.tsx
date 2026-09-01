@@ -404,6 +404,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const setBalance = useCallback((balance: number) => {
         setUser(prev => {
             if (!prev) return prev;
+            // Never overwrite a real known balance with 0 (guards against race conditions)
+            if (balance === 0 && (prev.balance ?? 0) > 0) return prev;
             const updated = { ...prev, balance };
             try { localStorage.setItem(USER_CACHE_KEY, JSON.stringify(updated)); } catch (e) {}
             return updated;
@@ -459,15 +461,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
                             });
                         }
                     }).catch(() => {
-                        setUser({
-                            id: tgUser.id,
-                            first_name: tgUser.first_name,
-                            last_name: tgUser.last_name,
-                            username: tgUser.username,
-                            display_name: [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' '),
-                            photo_url: tgUser.photo_url ?? '',
-                            balance: 0,
-                        });
+                        setUser(prev => ({
+                            ...(prev ?? {
+                                id: tgUser.id,
+                                first_name: tgUser.first_name || 'User',
+                                last_name: tgUser.last_name || '',
+                                username: tgUser.username || '',
+                                display_name: [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' ') || 'User',
+                                photo_url: tgUser.photo_url ?? '',
+                            }),
+                            balance: prev?.balance ?? 0,
+                        }));
                     });
                 }
             } catch (e) { }
