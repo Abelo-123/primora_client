@@ -25,7 +25,7 @@ export function ServiceModal({ category, recommendedIds, onSelect, onClose }: Pr
     const deferredSearch = useDeferredValue(search);
     const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
 
-    const { data: categoryServices = [], isLoading: loading, isFetching, isError } = useCategoryServices(category, recommendedIds);
+    const { data: categoryServices = [], isLoading: loading } = useCategoryServices(category, recommendedIds);
     const showRateSkeleton = (isSyncingServices && categoryServices.length === 0) || (loading && categoryServices.length === 0);
 
     const filtered = useMemo(() => {
