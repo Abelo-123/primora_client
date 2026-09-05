@@ -20,6 +20,46 @@ export function SearchModal({ onClose }: Props) {
     const { data: services = [], isLoading, isFetching } = useAllServices();
     const showRateSkeleton = isSyncingServices || isFetching;
 
+    const [recentSearches, setRecentSearches] = useState<Service[]>(() => {
+        try {
+            const saved = localStorage.getItem('primora_recent_searches');
+            return saved ? JSON.parse(saved) : [];
+        } catch {
+            return [];
+        }
+    });
+
+    const saveRecentSearch = (service: Service) => {
+        try {
+            const filtered = recentSearches.filter(s => s.id !== service.id);
+            const updated = [service, ...filtered].slice(0, 10);
+            setRecentSearches(updated);
+            localStorage.setItem('primora_recent_searches', JSON.stringify(updated));
+        } catch (err) {
+            console.error('Failed to save recent search:', err);
+        }
+    };
+
+    const handleRemoveRecent = (e: React.MouseEvent, id: number) => {
+        e.stopPropagation();
+        const updated = recentSearches.filter(s => s.id !== id);
+        setRecentSearches(updated);
+        try {
+            localStorage.setItem('primora_recent_searches', JSON.stringify(updated));
+        } catch (err) {
+            console.error('Failed to remove recent search item:', err);
+        }
+    };
+
+    const handleClearAllRecent = () => {
+        setRecentSearches([]);
+        try {
+            localStorage.removeItem('primora_recent_searches');
+        } catch (err) {
+            console.error('Failed to clear recent searches:', err);
+        }
+    };
+
     const results = useMemo(() => {
         const q = search.trim().toLowerCase();
         if (!q) return [];
@@ -41,6 +81,8 @@ export function SearchModal({ onClose }: Props) {
     }, [results]);
 
     const handleSelectSearchResult = (service: Service) => {
+        saveRecentSearch(service);
+
         const textToCheck = (service.category + " " + service.name).toLowerCase();
         
         let network: SocialPlatform = 'other';
@@ -129,7 +171,67 @@ export function SearchModal({ onClose }: Props) {
                             ))}
                         </Section>
                     ) : search.trim() === '' ? (
-                        <Placeholder description="Start typing to search" />
+                        recentSearches.length > 0 ? (
+                            <Section
+                                header={
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                                        <span>🕒 Recent Searches</span>
+                                        <button
+                                            onClick={handleClearAllRecent}
+                                            style={{
+                                                background: 'transparent',
+                                                border: 'none',
+                                                color: 'var(--tg-theme-link-color, #6ab3f3)',
+                                                fontSize: '12px',
+                                                fontWeight: 500,
+                                                cursor: 'pointer',
+                                                padding: '0 4px'
+                                            }}
+                                        >
+                                            Clear All
+                                        </button>
+                                    </div>
+                                }
+                            >
+                                {recentSearches.map(svc => {
+                                    const formula = calculatePriceFormula(svc.rate, svc.original_rate, rateMultiplier, 1000, 0, adminMargin);
+                                    return (
+                                        <div
+                                            key={svc.id}
+                                            className="modal-item"
+                                            onClick={() => handleSelectSearchResult(svc)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            <div className="modal-item-main">
+                                                <div className="modal-item-name">{svc.name}</div>
+                                                <div style={{ fontSize: '11px', opacity: 0.6, marginTop: '2px' }}>{svc.category}</div>
+                                            </div>
+                                            <div className="modal-item-id" style={{ marginRight: '8px' }}>ID: {svc.id}</div>
+                                            <div className="modal-item-price" style={{ marginRight: '8px' }}>
+                                                {showRateSkeleton ? <TextSkeleton width={45} height={12} /> : formatETB(formula.finalRate)} <span style={{ fontSize: '10px', opacity: 0.8 }}>/1000</span>
+                                            </div>
+                                            <button
+                                                onClick={(e) => handleRemoveRecent(e, svc.id)}
+                                                title="Remove"
+                                                style={{
+                                                    background: 'transparent',
+                                                    border: 'none',
+                                                    color: 'var(--tg-theme-hint-color, rgba(255,255,255,0.4))',
+                                                    fontSize: '14px',
+                                                    cursor: 'pointer',
+                                                    padding: '4px 6px',
+                                                    lineHeight: 1
+                                                }}
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                            </Section>
+                        ) : (
+                            <Placeholder description="Start typing to search" />
+                        )
                     ) : results.length === 0 ? (
                         <Placeholder description="No services match your search" />
                     ) : (
