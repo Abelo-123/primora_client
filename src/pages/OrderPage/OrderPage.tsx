@@ -348,7 +348,7 @@ export function OrderPage() {
                 <div style={{ height: '0.5px', background: 'rgba(255, 255, 255, 0.08)', marginLeft: '16px' }} />
 
                 <Cell
-                    subtitle={selectedService?.name || 'Select a service'}
+                    subtitle={selectedService ? `ID: ${selectedService.id} - ${selectedService.name}` : 'Select a service'}
                     style={{ opacity: selectedCategory ? 1 : 0.4, transition: 'opacity 0.2s' }}
                     onClick={() => {
                         if (selectedCategory) setShowServiceModal(true);

@@ -124,10 +124,10 @@ export function ServiceModal({ category, recommendedIds, onSelect, onClose }: Pr
                                         className="modal-item"
                                         onClick={() => onSelect(svc)}
                                     >
+                                        <div className="modal-item-id">ID: {svc.id}</div>
                                         <div className="modal-item-main">
                                             <div className="modal-item-name">{svc.name}</div>
                                         </div>
-                                        <div className="modal-item-id">ID: {svc.id}</div>
                                         <div className="modal-item-price">
                                             {showRateSkeleton ? <TextSkeleton width={45} height={12} /> : formatETB(formula.finalRate)} <span style={{ fontSize: '10px', opacity: 0.8 }}>/1000</span>
                                         </div>
