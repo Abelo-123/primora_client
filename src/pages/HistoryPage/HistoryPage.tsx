@@ -19,6 +19,61 @@ function normalizeStatus(status: string): OrderStatus {
     return s as OrderStatus;
 }
 
+function TruncatedLink({ link }: { link: string }) {
+    const [expanded, setExpanded] = useState(false);
+
+    if (!link) return null;
+
+    const href = link.startsWith('http') || link.startsWith('t.me') || link.startsWith('@')
+        ? (link.startsWith('@') ? `https://t.me/${link.slice(1)}` : link)
+        : `https://${link}`;
+
+    const MAX_LEN = 25;
+    const isLong = link.length > MAX_LEN;
+
+    return (
+        <div style={{ display: 'inline-flex', flexWrap: 'wrap', alignItems: 'center', gap: '4px', maxWidth: '100%', wordBreak: 'break-all' }}>
+            <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="service-link-text"
+                style={{
+                    color: 'var(--tg-theme-link-color, #6ab3f3)',
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                    wordBreak: 'break-all',
+                    fontSize: '12px'
+                }}
+            >
+                {expanded || !isLong ? link : `${link.slice(0, MAX_LEN)}...`}
+            </a>
+            {isLong && (
+                <button
+                    type="button"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setExpanded(!expanded);
+                    }}
+                    style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'var(--tg-theme-link-color, #6ab3f3)',
+                        fontSize: '11px',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        padding: '0 2px',
+                        textDecoration: 'none',
+                        lineHeight: 1
+                    }}
+                >
+                    {expanded ? 'See Less' : 'See More'}
+                </button>
+            )}
+        </div>
+    );
+}
+
 export function HistoryPage() {
     const { orders, showToast, refreshOrders, setActiveTab, isSyncingOrders } = useApp();
     const [filter, setFilter] = useState<OrderStatus | 'all'>('all');
@@ -234,18 +289,7 @@ export function HistoryPage() {
                                         </td>
                                         <td className="col-service">
                                             <div className="service-name-text">#{order.service_id} {order.service_name}</div>
-                                            <a
-                                                href={order.link.startsWith('http') || order.link.startsWith('t.me') || order.link.startsWith('@')
-                                                    ? (order.link.startsWith('@') ? `https://t.me/${order.link.slice(1)}` : order.link)
-                                                    : `https://${order.link}`
-                                                }
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="service-link-text"
-                                                style={{ color: 'var(--tg-theme-link-color)', textDecoration: 'underline', cursor: 'pointer' }}
-                                            >
-                                                {order.link}
-                                            </a>
+                                            <TruncatedLink link={order.link} />
                                             {order.custom_fields && Array.isArray(order.custom_fields) && order.custom_fields.length > 0 && (
                                                 <div style={{ marginTop: '6px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                                                     {order.custom_fields.map((cf, i) => (
