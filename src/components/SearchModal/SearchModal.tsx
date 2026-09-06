@@ -202,10 +202,23 @@ export function SearchModal({ onClose }: Props) {
                                             onClick={() => handleSelectSearchResult(svc)}
                                             style={{ cursor: 'pointer' }}
                                         >
-                                            <div className="modal-item-id" style={{ marginRight: '8px' }}>ID: {svc.id}</div>
                                             <div className="modal-item-main">
-                                                <div className="modal-item-name">{svc.name}</div>
-                                                <div style={{ fontSize: '11px', opacity: 0.6, marginTop: '2px' }}>{svc.category}</div>
+                                                <div className="modal-item-name">
+                                                    <span style={{ marginRight: '6px', fontSize: '13px', opacity: 0.7 }}>🕒</span>
+                                                    {svc.name}
+                                                </div>
+                                                <div style={{ fontSize: '11px', marginTop: '3px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                    <span style={{ color: 'var(--tg-theme-link-color, #6ab3f3)', fontWeight: 600 }}>ID: {svc.id}</span>
+                                                    {svc.category && (
+                                                        <>
+                                                            <span style={{ opacity: 0.4 }}>•</span>
+                                                            <span style={{ opacity: 0.6 }}>{svc.category}</span>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="modal-item-id" style={{ marginRight: '8px', color: 'var(--tg-theme-link-color, #6ab3f3)', fontWeight: 600 }}>
+                                                ID: {svc.id}
                                             </div>
                                             <div className="modal-item-price" style={{ marginRight: '8px' }}>
                                                 {showRateSkeleton ? <TextSkeleton width={45} height={12} /> : formatETB(formula.finalRate)} <span style={{ fontSize: '10px', opacity: 0.8 }}>/1000</span>
@@ -245,10 +258,10 @@ export function SearchModal({ onClose }: Props) {
                                             className="modal-item"
                                             onClick={() => handleSelectSearchResult(svc)}
                                         >
-                                            <div className="modal-item-id">ID: {svc.id}</div>
                                             <div className="modal-item-main">
                                                 <div className="modal-item-name">{svc.name}</div>
                                             </div>
+                                            <div className="modal-item-id">ID: {svc.id}</div>
                                             <div className="modal-item-price">
                                                 {showRateSkeleton ? <TextSkeleton width={45} height={12} /> : formatETB(formula.finalRate)} <span style={{ fontSize: '10px', opacity: 0.8 }}>/1000</span>
                                             </div>
