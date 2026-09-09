@@ -374,3 +374,15 @@ export async function requestWithdrawal(payload: RequestWithdrawalPayload): Prom
     });
 }
 
+// ─── Average Times API ──────────────────────────────────────────────────────
+export async function getAverageTimes(forceRefresh = false): Promise<Record<string, string>> {
+    try {
+        const endpoint = forceRefresh ? '/average-times?action=refresh' : '/average-times';
+        const res = await nodeApiFetch<{ success: boolean; data: Record<string, string> }>(endpoint);
+        return res?.data || {};
+    } catch (err) {
+        debugError('[API] Failed to fetch average times:', err);
+        return {};
+    }
+}
+

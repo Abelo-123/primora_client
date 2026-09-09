@@ -13,6 +13,7 @@ import {
 import * as api from '../api';
 import Swal from 'sweetalert2';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useAverageTimes } from '../hooks/useAverageTimes';
 
 interface AppState {
     user: UserProfile | null;
@@ -629,10 +630,23 @@ export function AppProvider({ children }: { children: ReactNode }) {
         })();
     }, [isTelegramApp]);
 
+    const { data: avgTimesMap = {} } = useAverageTimes();
+
+    const enrichedServices = useMemo(() => {
+        if (!services || services.length === 0) return services;
+        return services.map(s => {
+            const liveAvg = avgTimesMap[String(s.id)];
+            return {
+                ...s,
+                averageTime: (liveAvg && liveAvg.trim()) ? liveAvg.trim() : (s.averageTime || ''),
+            };
+        });
+    }, [services, avgTimesMap]);
+
     const value = useMemo<AppContextType>(() => ({
         user,
         isTelegramApp,
-        services,
+        services: enrichedServices,
         recommendedIds,
         selectedPlatform,
         selectedCategory,
@@ -675,7 +689,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         refreshDeposits,
         refreshAlerts,
     }), [
-        user, isTelegramApp, services, recommendedIds, selectedPlatform,
+        user, isTelegramApp, enrichedServices, recommendedIds, selectedPlatform,
         selectedCategory, selectedService, orders, deposits, alerts,
         settings, activeTab, toasts, isLoading, unreadAlerts,
         isSyncingBalance, isSyncingServices, isSyncingOrders, isSyncingDeposits, isSyncingAlerts,
