@@ -7,7 +7,8 @@ export function useAverageTimes() {
     return useQuery<Record<string, string>>({
         queryKey: ['average-times'],
         queryFn: async () => {
-            const freshData = await getAverageTimes(false);
+            // Pass forceRefresh = true to trigger live SWR background sync with JAP.com
+            const freshData = await getAverageTimes(true);
             if (freshData && Object.keys(freshData).length > 0) {
                 try {
                     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(freshData));
@@ -30,10 +31,10 @@ export function useAverageTimes() {
             return undefined;
         },
         staleTime: 0,                         // Stale immediately -> triggers background revalidation on load (SWR)
-        refetchInterval: 15 * 60 * 1000,      // Revalidate in background every 15 minutes
+        refetchInterval: 30 * 1000,           // Revalidate in background every 30 seconds for real-time JAP sync
         refetchOnWindowFocus: true,           // Revalidate on window focus
         refetchOnMount: 'always',             // Revalidate when component mounts
-        placeholderData: (prev) => prev,       // Serve stale data while background fetch executes
+        placeholderData: (prev) => prev,       // Serve stale data while background fetch executes (zero latency)
         retry: 2,
     });
 }
