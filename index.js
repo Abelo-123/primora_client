@@ -21,6 +21,7 @@ import getCategoriesRouter from './routes/getCategories.js';
 import adminUsersRouter from './routes/admin.js';
 import recommendedServicesRouter from './routes/recommendedServices.js';
 import referralRouter from './routes/referral.js';
+import averageTimesRouter from './routes/averageTimes.js';
 
 const app = express();
 
@@ -233,6 +234,7 @@ app.use('/api/categories', getCategoriesRouter);
 app.use('/api/admin', adminUsersRouter);
 app.use('/api/services', recommendedServicesRouter);
 app.use('/api/referral', referralRouter);
+app.use('/api/average-times', averageTimesRouter);
 
 // Start server
 // In cPanel/Passenger, we MUST NOT specify a port number if we want it to handle routing.
