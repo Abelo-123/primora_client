@@ -348,7 +348,7 @@ export function OrderPage() {
                 <div style={{ height: '0.5px', background: 'rgba(255, 255, 255, 0.08)', marginLeft: '16px' }} />
 
                 <Cell
-                    subtitle={selectedService ? `ID: ${selectedService.id} - ${selectedService.name}` : 'Select a service'}
+                    subtitle={selectedService?.name || 'Select a service'}
                     style={{ opacity: selectedCategory ? 1 : 0.4, transition: 'opacity 0.2s' }}
                     onClick={() => {
                         if (selectedCategory) setShowServiceModal(true);
@@ -378,6 +378,12 @@ export function OrderPage() {
                             <span>Rate per 1000</span>
                             <span className="bold highlight">
                                 {isSyncingServices ? <TextSkeleton width={60} height={14} /> : formatETB(priceFormula?.finalRate ?? selectedService.rate)}
+                            </span>
+                        </div>
+                        <div className="order-details-card__row">
+                            <span>Average Time</span>
+                            <span className="bold" style={{ color: 'var(--color-accent, #00f5d4)' }}>
+                                {selectedService.averageTime || 'Not specified'}
                             </span>
                         </div>
                     </div>

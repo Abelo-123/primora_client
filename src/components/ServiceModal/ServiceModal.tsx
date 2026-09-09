@@ -124,10 +124,15 @@ export function ServiceModal({ category, recommendedIds, onSelect, onClose }: Pr
                                         className="modal-item"
                                         onClick={() => onSelect(svc)}
                                     >
-                                        <div className="modal-item-id">ID: {svc.id}</div>
                                         <div className="modal-item-main">
                                             <div className="modal-item-name">{svc.name}</div>
+                                            {svc.averageTime && svc.averageTime !== 'Not specified' && (
+                                                <div style={{ fontSize: '11px', color: '#00f5d4', marginTop: '2px', fontWeight: 500 }}>
+                                                    ⏱️ Avg: {svc.averageTime}
+                                                </div>
+                                            )}
                                         </div>
+                                        <div className="modal-item-id">ID: {svc.id}</div>
                                         <div className="modal-item-price">
                                             {showRateSkeleton ? <TextSkeleton width={45} height={12} /> : formatETB(formula.finalRate)} <span style={{ fontSize: '10px', opacity: 0.8 }}>/1000</span>
                                         </div>
