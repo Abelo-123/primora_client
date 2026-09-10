@@ -309,12 +309,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     }).catch(() => { }).finally(() => setIsSyncingBalance(false));
                 }
 
-                // 2b. Priority 2: Real-time Services & Settings from DB (forceRefresh = true)
+                // 2b. SWR Services & Settings from DB/Cache
                 setIsSyncingServices(true);
                 await Promise.allSettled([
                     (async () => {
                         try {
-                            const servicesData = await api.getServices(false, true);
+                            const servicesData = await api.getServices(true, false);
                             const transformed: Service[] = servicesData.map((s: any) => ({
                                 id: s.service || s.id,
                                 category: s.category,
@@ -334,13 +334,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
                                 queryClient.invalidateQueries({ queryKey: ['services'] });
                             }
                         } catch (err) {
-                            console.error('Failed to load real-time services:', err);
+                            console.error('Failed to load services:', err);
                         }
                     })(),
 
                     (async () => {
                         try {
-                            const settingsData = await api.getSettings(false, true);
+                            const settingsData = await api.getSettings(true, false);
                             const oldMultiplier = settings.rateMultiplier;
                             const parsedAdminMargin = typeof settingsData.adminMargin === 'number' 
                                 ? settingsData.adminMargin 
@@ -374,21 +374,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
                                 setRecommendedIds([]);
                             }
                         } catch (err) {
-                            console.error('Failed to load real-time settings:', err);
+                            console.error('Failed to load settings:', err);
                         }
                     })()
                 ]);
                 setIsSyncingServices(false);
-
-                // 2c. Background Pre-fetch Categories for all social media platforms
-                const platforms = ['telegram', 'instagram', 'tiktok', 'youtube', 'facebook', 'twitter', 'other'];
-                platforms.forEach(platform => {
-                    queryClient.prefetchQuery({
-                        queryKey: ['categories', platform],
-                        queryFn: () => api.getCategories(platform),
-                        staleTime: 5 * 60 * 1000,
-                    }).catch(() => {});
-                });
 
                 // 2d. Priority 3: User Activity & History (orders, deposits, alerts)
                 if (initData) {

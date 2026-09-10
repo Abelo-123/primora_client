@@ -60,9 +60,24 @@ function AppContent() {
         console.log('Telegram SDK Color setup failed', e);
     }
 
-    // Silent background pre-fetch (Warm up the cache)
-    fetch(`${NODE_API_URL}/services`).catch(() => {});
-    fetch(`${NODE_API_URL}/categories`).catch(() => {});
+    // Silent background warm-up & periodic keep-alive ping to prevent Render cold starts
+    const pingWake = () => {
+      fetch(`${NODE_API_URL}/app/wake`).catch(() => {});
+    };
+    pingWake();
+    const keepAliveInterval = setInterval(pingWake, 5 * 60 * 1000); // Keep-alive every 5 min
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        pingWake();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(keepAliveInterval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   // Combined Back Button logic for Modals and Tabs
