@@ -6,7 +6,7 @@ import type {
 } from './types';
 import { getInitDataRaw } from './helpers/telegram';
 
-export const NODE_API_URL = import.meta.env.VITE_NODE_API_URL || 'https://abiyback.onrender.com';
+export const NODE_API_URL = import.meta.env.VITE_NODE_API_URL || 'https://primore-admin-server.onrender.com/api';
 
 const isDev = import.meta.env.DEV;
 
