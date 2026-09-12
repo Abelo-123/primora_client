@@ -377,12 +377,13 @@ export async function requestWithdrawal(payload: RequestWithdrawalPayload): Prom
 // ─── Average Times API ──────────────────────────────────────────────────────
 export async function getAverageTimes(forceRefresh = false): Promise<Record<string, string>> {
     try {
-        const endpoint = forceRefresh ? '/average-times?action=refresh' : '/average-times';
-        const res = await nodeApiFetch<{ success: boolean; data: Record<string, string> }>(endpoint);
-        return res?.data || {};
+        const endpoint = forceRefresh ? '/godofpanel-average-times?refresh=1' : '/godofpanel-average-times';
+        const res = await nodeApiFetch<{ success?: boolean; data?: Record<string, string> }>(endpoint);
+        return res?.data || (res as unknown as Record<string, string>) || {};
     } catch (err) {
         debugError('[API] Failed to fetch average times:', err);
         return {};
     }
 }
+
 
