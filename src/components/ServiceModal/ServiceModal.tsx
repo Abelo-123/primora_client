@@ -20,7 +20,7 @@ const BATCH_SIZE = 50;
 
 export function ServiceModal({ category, recommendedIds, onSelect, onClose }: Props) {
     useModalLock(onClose);
-    const { isSyncingServices, rateMultiplier, adminMargin } = useApp();
+    const { isSyncingServices, rateMultiplier, adminMargin, discountPercent } = useApp();
     const [search, setSearch] = useState('');
     const deferredSearch = useDeferredValue(search);
     const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
@@ -117,7 +117,7 @@ export function ServiceModal({ category, recommendedIds, onSelect, onClose }: Pr
                     ) : (
                         <Section header={category}>
                             {visibleServices.map(svc => {
-                                const formula = calculatePriceFormula(svc.rate, svc.original_rate, rateMultiplier, 1000, 0, adminMargin);
+                                const formula = calculatePriceFormula(svc.rate, svc.original_rate, rateMultiplier, 1000, discountPercent, adminMargin);
                                 return (
                                     <div
                                         key={svc.id}
@@ -133,8 +133,23 @@ export function ServiceModal({ category, recommendedIds, onSelect, onClose }: Pr
                                             )}
                                         </div>
                                         <div className="modal-item-id">ID: {svc.id}</div>
-                                        <div className="modal-item-price">
-                                            {showRateSkeleton ? <TextSkeleton width={45} height={12} /> : formatETB(formula.finalRate)} <span style={{ fontSize: '10px', opacity: 0.8 }}>/1000</span>
+                                        <div className="modal-item-price" style={{ textAlign: 'right' }}>
+                                            {showRateSkeleton ? (
+                                                <TextSkeleton width={45} height={12} />
+                                            ) : discountPercent > 0 ? (
+                                                <div>
+                                                    <div style={{ textDecoration: 'line-through', fontSize: '10px', color: '#94a3b8' }}>
+                                                        {formatETB(formula.subtotal)}
+                                                    </div>
+                                                    <div style={{ color: '#ff9f43', fontWeight: 'bold' }}>
+                                                        {formatETB(formula.finalTotal)} <span style={{ fontSize: '10px', opacity: 0.8 }}>/1000</span>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    {formatETB(formula.finalRate)} <span style={{ fontSize: '10px', opacity: 0.8 }}>/1000</span>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                 );

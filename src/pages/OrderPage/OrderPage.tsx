@@ -18,7 +18,7 @@ export function OrderPage() {
         user, refreshOrders, isSyncingServices, rateMultiplier, adminMargin,
         recommendedIds, selectedPlatform, selectedCategory, selectedService,
         setSelectedPlatform, setSelectedCategory, setSelectedService,
-        showToast, discountPercent, setBalance
+        showToast, discountPercent, holidayName, setBalance
     } = appContext;
 
     const [showCategoryModal, setShowCategoryModal] = useState(false);
@@ -234,6 +234,53 @@ export function OrderPage() {
     return (
         <div className="order-page-wrapper">
             <NewsTicker />
+            
+            {/* ─── Holiday Promotion Banner ─── */}
+            {discountPercent > 0 && (
+                <div style={{
+                    background: 'linear-gradient(135deg, rgba(255, 107, 107, 0.2) 0%, rgba(255, 159, 67, 0.2) 50%, rgba(254, 202, 87, 0.2) 100%)',
+                    border: '1px solid rgba(255, 159, 67, 0.4)',
+                    borderRadius: '16px',
+                    padding: '14px 18px',
+                    margin: '12px 16px 4px 16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    boxShadow: '0 8px 24px rgba(255, 107, 107, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)'
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <span style={{ fontSize: '26px' }}>🎉</span>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span style={{
+                                fontWeight: 700,
+                                fontSize: '15px',
+                                color: '#ffffff',
+                                letterSpacing: '0.3px',
+                                textShadow: '0 2px 4px rgba(0,0,0,0.4)'
+                            }}>
+                                {holidayName ? `${holidayName} Special!` : 'Holiday Special Offer!'}
+                            </span>
+                            <span style={{ fontSize: '12px', color: '#ffd166', fontWeight: 500 }}>
+                                {discountPercent}% OFF applied to all order rates!
+                            </span>
+                        </div>
+                    </div>
+                    <div style={{
+                        background: 'linear-gradient(135deg, #ff6b6b 0%, #ff9f43 100%)',
+                        color: '#ffffff',
+                        padding: '6px 14px',
+                        borderRadius: '20px',
+                        fontWeight: 800,
+                        fontSize: '13px',
+                        boxShadow: '0 4px 12px rgba(255, 107, 107, 0.35)',
+                        whiteSpace: 'nowrap'
+                    }}>
+                        -{discountPercent}% OFF
+                    </div>
+                </div>
+            )}
             
             {/* ─── Phone Verification Banner ─── */}
             {!user?.phone_verified && (
