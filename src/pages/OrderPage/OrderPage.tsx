@@ -235,49 +235,98 @@ export function OrderPage() {
         <div className="order-page-wrapper">
             <NewsTicker />
             
-            {/* ─── Holiday Promotion Banner ─── */}
+            {/* ─── Currently Active Promotion Banner (Paxyo / Primora Style) ─── */}
             {discountPercent > 0 && (
                 <div style={{
-                    background: 'linear-gradient(135deg, rgba(255, 107, 107, 0.2) 0%, rgba(255, 159, 67, 0.2) 50%, rgba(254, 202, 87, 0.2) 100%)',
-                    border: '1px solid rgba(255, 159, 67, 0.4)',
-                    borderRadius: '16px',
-                    padding: '14px 18px',
-                    margin: '12px 16px 4px 16px',
+                    background: 'linear-gradient(135deg, rgba(67, 34, 115, 0.45) 0%, rgba(45, 21, 82, 0.6) 100%)',
+                    border: '1px solid rgba(138, 75, 235, 0.35)',
+                    borderRadius: '24px',
+                    padding: '20px 18px 16px 18px',
+                    margin: '12px 16px',
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    boxShadow: '0 8px 24px rgba(255, 107, 107, 0.15)',
-                    backdropFilter: 'blur(10px)',
-                    WebkitBackdropFilter: 'blur(10px)'
+                    flexDirection: 'column',
+                    gap: '14px',
+                    boxShadow: '0 12px 32px rgba(45, 21, 82, 0.35)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
+                    position: 'relative',
+                    overflow: 'hidden'
                 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <span style={{ fontSize: '26px' }}>🎉</span>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <span style={{
-                                fontWeight: 700,
-                                fontSize: '15px',
-                                color: '#ffffff',
-                                letterSpacing: '0.3px',
-                                textShadow: '0 2px 4px rgba(0,0,0,0.4)'
+                    {/* Top Header Row */}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', width: '100%' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                            {/* Left Icon Square */}
+                            <div style={{
+                                width: '48px',
+                                height: '48px',
+                                borderRadius: '16px',
+                                background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '24px',
+                                boxShadow: '0 6px 16px rgba(139, 92, 246, 0.4)',
+                                flexShrink: 0
                             }}>
-                                {holidayName ? `${holidayName} Special!` : 'Holiday Special Offer!'}
-                            </span>
-                            <span style={{ fontSize: '12px', color: '#ffd166', fontWeight: 500 }}>
-                                {discountPercent}% OFF applied to all order rates!
-                            </span>
+                                🎉
+                            </div>
+                            {/* Promotion Titles */}
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <span style={{
+                                    fontSize: '11px',
+                                    fontWeight: '800',
+                                    color: '#a78bfa',
+                                    letterSpacing: '0.8px',
+                                    textTransform: 'uppercase',
+                                    lineHeight: '1.2'
+                                }}>
+                                    Currently Active Promotion
+                                </span>
+                                <span style={{
+                                    fontSize: '18px',
+                                    fontWeight: '800',
+                                    color: '#ffffff',
+                                    lineHeight: '1.25',
+                                    marginTop: '2px'
+                                }}>
+                                    {holidayName || 'Holiday Promotion'}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* 🔥 Percentage Off Pill */}
+                        <div style={{
+                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                            color: '#ffffff',
+                            padding: '6px 14px',
+                            borderRadius: '20px',
+                            fontWeight: '800',
+                            fontSize: '14px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            boxShadow: '0 4px 14px rgba(16, 185, 129, 0.45)',
+                            whiteSpace: 'nowrap',
+                            flexShrink: 0
+                        }}>
+                            <span>🔥</span> {discountPercent}% OFF
                         </div>
                     </div>
+
+                    {/* Sub-card with Sparkles Icon */}
                     <div style={{
-                        background: 'linear-gradient(135deg, #ff6b6b 0%, #ff9f43 100%)',
-                        color: '#ffffff',
-                        padding: '6px 14px',
-                        borderRadius: '20px',
-                        fontWeight: 800,
-                        fontSize: '13px',
-                        boxShadow: '0 4px 12px rgba(255, 107, 107, 0.35)',
-                        whiteSpace: 'nowrap'
+                        background: 'rgba(24, 15, 43, 0.65)',
+                        border: '1px solid rgba(138, 75, 235, 0.2)',
+                        borderRadius: '14px',
+                        padding: '12px 14px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px'
                     }}>
-                        -{discountPercent}% OFF
+                        <span style={{ fontSize: '15px' }}>✨</span>
+                        <span style={{ fontSize: '12px', color: '#c4b5fd', lineHeight: '1.35', fontWeight: '500' }}>
+                            Promotional prices are automatically discounted across all services below!
+                        </span>
                     </div>
                 </div>
             )}

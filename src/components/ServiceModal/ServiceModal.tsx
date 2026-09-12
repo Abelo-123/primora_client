@@ -121,35 +121,99 @@ export function ServiceModal({ category, recommendedIds, onSelect, onClose }: Pr
                                 return (
                                     <div
                                         key={svc.id}
-                                        className="modal-item"
                                         onClick={() => onSelect(svc)}
+                                        style={{
+                                            padding: '14px 16px',
+                                            borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: '8px',
+                                            cursor: 'pointer',
+                                            WebkitTapHighlightColor: 'transparent'
+                                        }}
                                     >
-                                        <div className="modal-item-main">
-                                            <div className="modal-item-name">{svc.name}</div>
-                                            {svc.averageTime && svc.averageTime !== 'Not specified' && (
-                                                <div style={{ fontSize: '11px', color: '#00f5d4', marginTop: '2px', fontWeight: 500 }}>
-                                                    ⏱️ Avg: {svc.averageTime}
-                                                </div>
-                                            )}
+                                        {/* Service Title */}
+                                        <div style={{
+                                            fontSize: '14px',
+                                            fontWeight: 600,
+                                            color: '#ffffff',
+                                            lineHeight: '1.4'
+                                        }}>
+                                            {svc.name}
                                         </div>
-                                        <div className="modal-item-id">ID: {svc.id}</div>
-                                        <div className="modal-item-price" style={{ textAlign: 'right' }}>
-                                            {showRateSkeleton ? (
-                                                <TextSkeleton width={45} height={12} />
-                                            ) : discountPercent > 0 ? (
-                                                <div>
-                                                    <div style={{ textDecoration: 'line-through', fontSize: '10px', color: '#94a3b8' }}>
-                                                        {formatETB(formula.subtotal)}
-                                                    </div>
-                                                    <div style={{ color: '#ff9f43', fontWeight: 'bold' }}>
-                                                        {formatETB(formula.finalTotal)} <span style={{ fontSize: '10px', opacity: 0.8 }}>/1000</span>
-                                                    </div>
+
+                                        {/* Service Details Row */}
+                                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                                            {/* #ID Badge */}
+                                            <div style={{
+                                                background: 'rgba(99, 102, 241, 0.18)',
+                                                color: '#818cf8',
+                                                fontSize: '11px',
+                                                fontWeight: 700,
+                                                padding: '4px 8px',
+                                                borderRadius: '6px',
+                                                height: 'fit-content',
+                                                marginTop: '2px'
+                                            }}>
+                                                #{svc.id}
+                                            </div>
+
+                                            {/* Price and Min/Max Info */}
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
+                                                {/* Rocket Icon + Price Row */}
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                                                    <span style={{ fontSize: '13px' }}>🚀</span>
+
+                                                    {showRateSkeleton ? (
+                                                        <TextSkeleton width={60} height={14} />
+                                                    ) : discountPercent > 0 ? (
+                                                        <>
+                                                            <span style={{
+                                                                textDecoration: 'line-through',
+                                                                fontSize: '12px',
+                                                                color: '#64748b'
+                                                            }}>
+                                                                {formatETB(formula.subtotal)}
+                                                            </span>
+                                                            <span style={{
+                                                                color: '#00d68f',
+                                                                fontWeight: 800,
+                                                                fontSize: '14px'
+                                                            }}>
+                                                                {formatETB(formula.finalTotal)} <span style={{ fontSize: '12px', color: '#00d68f', opacity: 0.9, fontWeight: 500 }}>/ 1000</span>
+                                                            </span>
+                                                        </>
+                                                    ) : (
+                                                        <span style={{
+                                                            color: '#00d68f',
+                                                            fontWeight: 800,
+                                                            fontSize: '14px'
+                                                        }}>
+                                                            {formatETB(formula.finalRate)} <span style={{ fontSize: '12px', color: '#00d68f', opacity: 0.9, fontWeight: 500 }}>/ 1000</span>
+                                                        </span>
+                                                    )}
                                                 </div>
-                                            ) : (
-                                                <>
-                                                    {formatETB(formula.finalRate)} <span style={{ fontSize: '10px', opacity: 0.8 }}>/1000</span>
-                                                </>
-                                            )}
+
+                                                {/* Discount Pill + Min/Max */}
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#94a3b8' }}>
+                                                    {discountPercent > 0 && (
+                                                        <span style={{
+                                                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                                            color: '#ffffff',
+                                                            fontSize: '10px',
+                                                            fontWeight: 800,
+                                                            padding: '2px 6px',
+                                                            borderRadius: '4px',
+                                                            lineHeight: '1.2'
+                                                        }}>
+                                                            {discountPercent}% OFF
+                                                        </span>
+                                                    )}
+                                                    <span>Min: {svc.min.toLocaleString()}</span>
+                                                    <span>|</span>
+                                                    <span>Max: {svc.max.toLocaleString()}</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 );
