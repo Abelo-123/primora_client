@@ -472,9 +472,33 @@ export function OrderPage() {
                         </div>
                         <div className="order-details-card__row">
                             <span>Rate per 1000</span>
-                            <span className="bold highlight">
-                                {isSyncingServices ? <TextSkeleton width={60} height={14} /> : formatETB(priceFormula?.finalRate ?? selectedService.rate)}
-                            </span>
+                            {isSyncingServices ? (
+                                <TextSkeleton width={60} height={14} />
+                            ) : discountPercent > 0 && priceFormula ? (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                                    <span style={{ textDecoration: 'line-through', fontSize: '12px', color: '#64748b' }}>
+                                        {formatETB(priceFormula.finalRate)}
+                                    </span>
+                                    <span className="bold highlight" style={{ color: '#00d68f', fontWeight: 800 }}>
+                                        {formatETB(priceFormula.finalRate * (1 - discountPercent / 100))}
+                                    </span>
+                                    <span style={{
+                                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                        color: '#ffffff',
+                                        fontSize: '10px',
+                                        fontWeight: 800,
+                                        padding: '2px 6px',
+                                        borderRadius: '4px',
+                                        lineHeight: '1.2'
+                                    }}>
+                                        {discountPercent}% OFF
+                                    </span>
+                                </div>
+                            ) : (
+                                <span className="bold highlight">
+                                    {formatETB(priceFormula?.finalRate ?? selectedService.rate)}
+                                </span>
+                            )}
                         </div>
                         <div className="order-details-card__row">
                             <span>Average Time</span>
@@ -562,10 +586,24 @@ export function OrderPage() {
 
 
                     <div className="order-total-card">
-                        <span>Total Charge</span>
-                        <span className="order-total-card__amount">
-                            {Number(totalCharge).toFixed(4)} ETB
-                        </span>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span>Total Charge</span>
+                            {discountPercent > 0 && effectiveQuantity > 0 && (
+                                <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 600, marginTop: '2px' }}>
+                                    🔥 {discountPercent}% discount applied!
+                                </span>
+                            )}
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                            {discountPercent > 0 && priceFormula && effectiveQuantity > 0 && (
+                                <span style={{ textDecoration: 'line-through', fontSize: '12px', color: '#64748b', marginBottom: '2px' }}>
+                                    {Number(priceFormula.subtotal).toFixed(4)} ETB
+                                </span>
+                            )}
+                            <span className="order-total-card__amount">
+                                {Number(totalCharge).toFixed(4)} ETB
+                            </span>
+                        </div>
                     </div>
 
 
