@@ -256,6 +256,29 @@ export function getInitDataUser() {
     return null;
 }
 
+/**
+ * Retrieves the current bot ID directly from the Telegram WebApp JS SDK
+ */
+export function getTelegramBotId(): string | null {
+    try {
+        // 1. Try to read from native Telegram WebApp window object
+        const tg = (window as any).Telegram?.WebApp;
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.receiver && tg.initDataUnsafe.receiver.id) {
+            return String(tg.initDataUnsafe.receiver.id);
+        }
+        
+        // 2. Try retrieveLaunchParams
+        const lp = retrieveLaunchParams() as any;
+        if (lp.initData && lp.initData.receiver && lp.initData.receiver.id) {
+            return String(lp.initData.receiver.id);
+        }
+    } catch (e) {}
+    
+    // 3. Fallback to parsing URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('bot_id') || null;
+}
+
 
 let _cachedInitDataString: string | null = null;
 

@@ -12,6 +12,7 @@ import {
     hapticImpact,
     hapticNotification,
     getInitDataString,
+    getTelegramBotId,
     openLink
 } from '../../helpers/telegram';
 import { Button } from '@telegram-apps/telegram-ui';
@@ -38,11 +39,6 @@ export function DepositPage() {
     const [checkoutUrl, setCheckoutUrl] = useState('');
 
     const balance = user?.balance ?? 0;
-
-    // ─── Refresh deposits on mount ───────────────────────────
-    useEffect(() => {
-        refreshDeposits().catch(() => { });
-    }, [refreshDeposits]);
 
     // Cleanup timer on unmount
     useEffect(() => {
@@ -107,7 +103,7 @@ export function DepositPage() {
                 const res = await fetch(`${NODE_API_URL}/verify-deposit?t=${Date.now()}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ tx_ref: txRef, initData, user_id: userId }),
+                    body: JSON.stringify({ tx_ref: txRef, initData, user_id: userId, bot_id: getTelegramBotId() || '' }),
                 });
                 const data = await res.json();
                 console.log(`[verify] Attempt ${attempt + 1}/${delays.length} result:`, data);
@@ -196,6 +192,25 @@ export function DepositPage() {
         setStep('success');
     }, [setBalance, showToast, refreshDeposits, user]);
 
+    // ─── Refresh deposits & check return tx_ref on mount ────
+    useEffect(() => {
+        refreshDeposits().catch(() => { });
+
+        // Auto-detect returning from Chapa checkout redirect
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const txRefFromUrl = urlParams.get('tx_ref') || sessionStorage.getItem('pending_tx_ref');
+
+            if (txRefFromUrl) {
+                sessionStorage.removeItem('pending_tx_ref');
+                if (window.history && window.history.replaceState) {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+                verifyDeposit(txRefFromUrl);
+            }
+        } catch (e) { }
+    }, [refreshDeposits, verifyDeposit]);
+
     // ─── Start Redirect Payment (Modal/Overlay Link) ─────────
     const startRedirectPayment = useCallback(async (depositAmount: number) => {
         hapticImpact('medium');
@@ -204,12 +219,11 @@ export function DepositPage() {
         try {
             const initData = await getInitDataString();
             const userId = user?.id || 'unauth_local_user';
+            const botId = getTelegramBotId() || '';
 
-            // Always use Primora444_bot as the return bot regardless of Telegram launch URL params
-            const botParam = botUsername || 'Primora444_bot';
-            const baseUrl = window.location.href.split('#')[0].split('?')[0];
-            const returnUrlObj = new URL('./close-popup.html', baseUrl);
-            returnUrlObj.searchParams.set('bot', botParam);
+            // Direct return URL pointing back to main Primora Mini App
+            const returnUrlObj = new URL(window.location.href);
+            returnUrlObj.searchParams.set('deposit_success', 'true');
             const returnUrl = returnUrlObj.href;
 
             const backendRes = await fetch(`${NODE_API_URL}/deposit`, {
@@ -219,7 +233,8 @@ export function DepositPage() {
                     amount: depositAmount,
                     initData,
                     user_id: userId,
-                    return_url: returnUrl
+                    return_url: returnUrl,
+                    bot_id: botId
                 }),
             });
             const backendData = await backendRes.json();
@@ -227,14 +242,16 @@ export function DepositPage() {
             if (backendData.success && backendData.checkout_url) {
                 setCheckoutUrl(backendData.checkout_url);
 
-                // Open link natively inside Telegram's closable in-app browser modal sheet
-                openLink(backendData.checkout_url);
-
-                showToast('success', 'Secure checkout opened! Checking status...');
-
                 if (backendData.tx_ref) {
-                    verifyDeposit(backendData.tx_ref);
+                    try {
+                        sessionStorage.setItem('pending_tx_ref', backendData.tx_ref);
+                    } catch (e) { }
                 }
+
+                showToast('success', 'Redirecting to secure checkout...');
+                
+                // Navigate directly in current window so return URL lands straight back on the Mini App
+                window.location.href = backendData.checkout_url;
             } else {
                 let errorMsg = 'Failed to initialize redirect payment';
                 if (backendData.error) {
@@ -248,7 +265,7 @@ export function DepositPage() {
             console.error('[deposit] Error starting payment:', err);
             showToast('error', 'Network error. Please try again.');
         }
-    }, [user, showToast, verifyDeposit]);
+    }, [user, showToast, verifyDeposit, botUsername]);
 
     // ─── Handle Deposit Button Click ─────────────────────────
     const handleDeposit = useCallback(() => {
