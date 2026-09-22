@@ -28,7 +28,6 @@ interface AppState {
     alerts: Alert[];
     rateMultiplier: number;
     adminMargin: number;
-    discountPercent: number;
     holidayName: string;
     maintenanceMode: boolean;
     userCanOrder: boolean;
@@ -141,7 +140,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const [settings, _setSettings] = useState({
         rateMultiplier: 200,
         adminMargin: 90,
-        discountPercent: 0,
         holidayName: '',
         maintenanceMode: false,
         userCanOrder: true,
@@ -271,7 +269,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
                         _setSettings({
                             rateMultiplier: parsedRateMultiplier,
                             adminMargin: parsedAdminMargin,
-                            discountPercent: settingsData.discountPercent || 0,
                             holidayName: settingsData.holidayName || '',
                             maintenanceMode: settingsData.maintenanceMode || false,
                             userCanOrder: settingsData.userCanOrder !== false,
@@ -351,7 +348,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
                             _setSettings({
                                 rateMultiplier: parsedRateMultiplier,
                                 adminMargin: parsedAdminMargin,
-                                discountPercent: settingsData.discountPercent || 0,
                                 holidayName: settingsData.holidayName || '',
                                 maintenanceMode: settingsData.maintenanceMode || false,
                                 userCanOrder: settingsData.userCanOrder !== false,
@@ -646,7 +642,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         alerts,
         rateMultiplier: settings.rateMultiplier,
         adminMargin: (settings as any).adminMargin || settings.rateMultiplier || 1,
-        discountPercent: settings.discountPercent,
         holidayName: settings.holidayName,
         maintenanceMode: settings.maintenanceMode,
         userCanOrder: settings.userCanOrder,

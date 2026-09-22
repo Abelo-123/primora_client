@@ -298,7 +298,6 @@ export interface AppSettings {
     profitMargin?: number;
     admin_margin?: number;
     profit_margin?: number;
-    discountPercent: number;
     holidayName: string;
     maintenanceMode: boolean;
     userCanOrder: boolean;
@@ -330,7 +329,6 @@ export async function getSettings(useCache = true, forceRefresh = false): Promis
         if (cached) return JSON.parse(cached);
         return {
             rateMultiplier: 1,
-            discountPercent: 0,
             holidayName: '',
             maintenanceMode: false,
             userCanOrder: true,

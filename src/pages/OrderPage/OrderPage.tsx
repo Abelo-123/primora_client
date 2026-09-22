@@ -18,7 +18,7 @@ export function OrderPage() {
         user, refreshOrders, isSyncingServices, rateMultiplier, adminMargin,
         recommendedIds, selectedPlatform, selectedCategory, selectedService,
         setSelectedPlatform, setSelectedCategory, setSelectedService,
-        showToast, discountPercent, holidayName, setBalance
+        showToast, setBalance
     } = appContext;
 
     const [showCategoryModal, setShowCategoryModal] = useState(false);
@@ -67,10 +67,9 @@ export function OrderPage() {
             (selectedService as any).original_rate,
             rateMultiplier || 1,
             effectiveQuantity > 0 ? effectiveQuantity : 1000,
-            discountPercent || 0,
             adminMargin || 1
         );
-    }, [selectedService, rateMultiplier, adminMargin, effectiveQuantity, discountPercent]);
+    }, [selectedService, rateMultiplier, adminMargin, effectiveQuantity]);
 
     const totalCharge = useMemo(() => {
         if (!selectedService || effectiveQuantity <= 0 || !priceFormula) return 0;
@@ -235,101 +234,7 @@ export function OrderPage() {
         <div className="order-page-wrapper">
             <NewsTicker />
             
-            {/* ─── Currently Active Promotion Banner (Paxyo / Primora Style) ─── */}
-            {discountPercent > 0 && (
-                <div style={{
-                    background: 'linear-gradient(135deg, rgba(67, 34, 115, 0.45) 0%, rgba(45, 21, 82, 0.6) 100%)',
-                    border: '1px solid rgba(138, 75, 235, 0.35)',
-                    borderRadius: '24px',
-                    padding: '20px 18px 16px 18px',
-                    margin: '12px 16px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '14px',
-                    boxShadow: '0 12px 32px rgba(45, 21, 82, 0.35)',
-                    backdropFilter: 'blur(16px)',
-                    WebkitBackdropFilter: 'blur(16px)',
-                    position: 'relative',
-                    overflow: 'hidden'
-                }}>
-                    {/* Top Header Row */}
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', width: '100%' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                            {/* Left Icon Square */}
-                            <div style={{
-                                width: '48px',
-                                height: '48px',
-                                borderRadius: '16px',
-                                background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '24px',
-                                boxShadow: '0 6px 16px rgba(139, 92, 246, 0.4)',
-                                flexShrink: 0
-                            }}>
-                                🎉
-                            </div>
-                            {/* Promotion Titles */}
-                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <span style={{
-                                    fontSize: '11px',
-                                    fontWeight: '800',
-                                    color: '#a78bfa',
-                                    letterSpacing: '0.8px',
-                                    textTransform: 'uppercase',
-                                    lineHeight: '1.2'
-                                }}>
-                                    Currently Active Promotion
-                                </span>
-                                <span style={{
-                                    fontSize: '18px',
-                                    fontWeight: '800',
-                                    color: '#ffffff',
-                                    lineHeight: '1.25',
-                                    marginTop: '2px'
-                                }}>
-                                    {holidayName || 'Holiday Promotion'}
-                                </span>
-                            </div>
-                        </div>
 
-                        {/* 🔥 Percentage Off Pill */}
-                        <div style={{
-                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                            color: '#ffffff',
-                            padding: '6px 14px',
-                            borderRadius: '20px',
-                            fontWeight: '800',
-                            fontSize: '14px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            boxShadow: '0 4px 14px rgba(16, 185, 129, 0.45)',
-                            whiteSpace: 'nowrap',
-                            flexShrink: 0
-                        }}>
-                            <span>🔥</span> {discountPercent}% OFF
-                        </div>
-                    </div>
-
-                    {/* Sub-card with Sparkles Icon */}
-                    <div style={{
-                        background: 'rgba(24, 15, 43, 0.65)',
-                        border: '1px solid rgba(138, 75, 235, 0.2)',
-                        borderRadius: '14px',
-                        padding: '12px 14px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px'
-                    }}>
-                        <span style={{ fontSize: '15px' }}>✨</span>
-                        <span style={{ fontSize: '12px', color: '#c4b5fd', lineHeight: '1.35', fontWeight: '500' }}>
-                            Promotional prices are automatically discounted across all services below!
-                        </span>
-                    </div>
-                </div>
-            )}
             
             {/* ─── Phone Verification Banner ─── */}
             {!user?.phone_verified && (
@@ -474,26 +379,6 @@ export function OrderPage() {
                             <span>Rate per 1000</span>
                             {isSyncingServices ? (
                                 <TextSkeleton width={60} height={14} />
-                            ) : discountPercent > 0 && priceFormula ? (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                                    <span style={{ textDecoration: 'line-through', fontSize: '12px', color: '#64748b' }}>
-                                        {formatETB(priceFormula.finalRate)}
-                                    </span>
-                                    <span className="bold highlight" style={{ color: '#00d68f', fontWeight: 800 }}>
-                                        {formatETB(priceFormula.finalRate * (1 - discountPercent / 100))}
-                                    </span>
-                                    <span style={{
-                                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                                        color: '#ffffff',
-                                        fontSize: '10px',
-                                        fontWeight: 800,
-                                        padding: '2px 6px',
-                                        borderRadius: '4px',
-                                        lineHeight: '1.2'
-                                    }}>
-                                        {discountPercent}% OFF
-                                    </span>
-                                </div>
                             ) : (
                                 <span className="bold highlight">
                                     {formatETB(priceFormula?.finalRate ?? selectedService.rate)}
@@ -588,18 +473,8 @@ export function OrderPage() {
                     <div className="order-total-card">
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <span>Total Charge</span>
-                            {discountPercent > 0 && effectiveQuantity > 0 && (
-                                <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 600, marginTop: '2px' }}>
-                                    🔥 {discountPercent}% discount applied!
-                                </span>
-                            )}
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                            {discountPercent > 0 && priceFormula && effectiveQuantity > 0 && (
-                                <span style={{ textDecoration: 'line-through', fontSize: '12px', color: '#64748b', marginBottom: '2px' }}>
-                                    {Number(priceFormula.subtotal).toFixed(4)} ETB
-                                </span>
-                            )}
                             <span className="order-total-card__amount">
                                 {Number(totalCharge).toFixed(4)} ETB
                             </span>

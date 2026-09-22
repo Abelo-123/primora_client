@@ -15,7 +15,7 @@ interface Props {
 
 export function SearchModal({ onClose }: Props) {
     useModalLock(onClose);
-    const { setSelectedPlatform, setSelectedCategory, setSelectedService, setActiveTab, isSyncingServices, rateMultiplier, adminMargin, discountPercent } = useApp();
+    const { setSelectedPlatform, setSelectedCategory, setSelectedService, setActiveTab, isSyncingServices, rateMultiplier, adminMargin } = useApp();
     const [search, setSearch] = useState('');
     const { data: services = [], isLoading, isFetching } = useAllServices();
     const showRateSkeleton = isSyncingServices || isFetching;
@@ -194,7 +194,7 @@ export function SearchModal({ onClose }: Props) {
                                 }
                             >
                                 {recentSearches.map(svc => {
-                                    const formula = calculatePriceFormula(svc.rate, svc.original_rate, rateMultiplier, 1000, discountPercent, adminMargin);
+                                    const formula = calculatePriceFormula(svc.rate, svc.original_rate, rateMultiplier, 1000, adminMargin);
                                     return (
                                         <div
                                             key={svc.id}
@@ -249,15 +249,6 @@ export function SearchModal({ onClose }: Props) {
                                                         <span style={{ fontSize: '13px' }}>🚀</span>
                                                         {showRateSkeleton ? (
                                                             <TextSkeleton width={60} height={14} />
-                                                        ) : discountPercent > 0 ? (
-                                                            <>
-                                                                <span style={{ textDecoration: 'line-through', fontSize: '12px', color: '#64748b' }}>
-                                                                    {formatETB(formula.subtotal)}
-                                                                </span>
-                                                                <span style={{ color: '#00d68f', fontWeight: 800, fontSize: '14px' }}>
-                                                                    {formatETB(formula.finalTotal)} <span style={{ fontSize: '12px', color: '#00d68f', opacity: 0.9, fontWeight: 500 }}>/ 1000</span>
-                                                                </span>
-                                                            </>
                                                         ) : (
                                                             <span style={{ color: '#00d68f', fontWeight: 800, fontSize: '14px' }}>
                                                                 {formatETB(formula.finalRate)} <span style={{ fontSize: '12px', color: '#00d68f', opacity: 0.9, fontWeight: 500 }}>/ 1000</span>
@@ -265,19 +256,6 @@ export function SearchModal({ onClose }: Props) {
                                                         )}
                                                     </div>
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#94a3b8' }}>
-                                                        {discountPercent > 0 && (
-                                                            <span style={{
-                                                                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                                                                color: '#ffffff',
-                                                                fontSize: '10px',
-                                                                fontWeight: 800,
-                                                                padding: '2px 6px',
-                                                                borderRadius: '4px',
-                                                                lineHeight: '1.2'
-                                                            }}>
-                                                                {discountPercent}% OFF
-                                                            </span>
-                                                        )}
                                                         {svc.min !== undefined && <span>Min: {svc.min.toLocaleString()}</span>}
                                                         {svc.max !== undefined && <><span>|</span><span>Max: {svc.max.toLocaleString()}</span></>}
                                                     </div>
@@ -296,7 +274,7 @@ export function SearchModal({ onClose }: Props) {
                         Array.from(grouped.entries()).map(([category, svcs]) => (
                             <Section key={category} header={category}>
                                 {svcs.map(svc => {
-                                    const formula = calculatePriceFormula(svc.rate, svc.original_rate, rateMultiplier, 1000, discountPercent, adminMargin);
+                                    const formula = calculatePriceFormula(svc.rate, svc.original_rate, rateMultiplier, 1000, adminMargin);
                                     return (
                                         <div
                                             key={svc.id}
@@ -332,15 +310,6 @@ export function SearchModal({ onClose }: Props) {
                                                         <span style={{ fontSize: '13px' }}>🚀</span>
                                                         {showRateSkeleton ? (
                                                             <TextSkeleton width={60} height={14} />
-                                                        ) : discountPercent > 0 ? (
-                                                            <>
-                                                                <span style={{ textDecoration: 'line-through', fontSize: '12px', color: '#64748b' }}>
-                                                                    {formatETB(formula.subtotal)}
-                                                                </span>
-                                                                <span style={{ color: '#00d68f', fontWeight: 800, fontSize: '14px' }}>
-                                                                    {formatETB(formula.finalTotal)} <span style={{ fontSize: '12px', color: '#00d68f', opacity: 0.9, fontWeight: 500 }}>/ 1000</span>
-                                                                </span>
-                                                            </>
                                                         ) : (
                                                             <span style={{ color: '#00d68f', fontWeight: 800, fontSize: '14px' }}>
                                                                 {formatETB(formula.finalRate)} <span style={{ fontSize: '12px', color: '#00d68f', opacity: 0.9, fontWeight: 500 }}>/ 1000</span>
@@ -348,19 +317,6 @@ export function SearchModal({ onClose }: Props) {
                                                         )}
                                                     </div>
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#94a3b8' }}>
-                                                        {discountPercent > 0 && (
-                                                            <span style={{
-                                                                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                                                                color: '#ffffff',
-                                                                fontSize: '10px',
-                                                                fontWeight: 800,
-                                                                padding: '2px 6px',
-                                                                borderRadius: '4px',
-                                                                lineHeight: '1.2'
-                                                            }}>
-                                                                {discountPercent}% OFF
-                                                            </span>
-                                                        )}
                                                         {svc.min !== undefined && <span>Min: {svc.min.toLocaleString()}</span>}
                                                         {svc.max !== undefined && <><span>|</span><span>Max: {svc.max.toLocaleString()}</span></>}
                                                     </div>

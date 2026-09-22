@@ -32,7 +32,7 @@ export type OrderFormProps = { onClose?: () => void };
 export const OrderForm = forwardRef<OrderFormHandle, OrderFormProps>(function OrderForm({ onClose }, ref) {
     const {
         selectedService, selectedPlatform,
-        discountPercent, isSyncingServices,
+        isSyncingServices,
         user, userCanOrder, isTelegramApp,
         setBalance, 
         showToast, setActiveTab,
@@ -84,14 +84,9 @@ export const OrderForm = forwardRef<OrderFormHandle, OrderFormProps>(function Or
     }, [service, quantity, comments, showComments]);
 
     // Memoized calculations
-    const { charge, hasDiscount } = useMemo(() => {
-        const original = (effectiveQuantity / 1000) * service.rate;
-        const discounted = discountPercent > 0 ? original * (1 - discountPercent / 100) : original;
-        return {
-            charge: discounted,
-            hasDiscount: discountPercent > 0,
-        };
-    }, [effectiveQuantity, service.rate, discountPercent]);
+    const charge = useMemo(() => {
+        return (effectiveQuantity / 1000) * service.rate;
+    }, [effectiveQuantity, service.rate]);
 
     // Validation with error messages
     const validation = useMemo(() => {
@@ -355,11 +350,7 @@ export const OrderForm = forwardRef<OrderFormHandle, OrderFormProps>(function Or
                             {service.category}
                         </Cell>
 
-                        {hasDiscount && (
-                            <Cell before="🔥" after={`- ${discountPercent}% `}>
-                                Discount applied
-                            </Cell>
-                        )}
+
                     </Section>
 
                     {service.custom_description && (

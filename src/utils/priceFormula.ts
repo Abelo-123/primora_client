@@ -9,8 +9,6 @@ export interface PriceFormulaResult {
     unitPrice: number;          // Final Rate / 1000
     quantity: number;
     subtotal: number;           // A × B × C × D
-    discountPercent: number;
-    discountAmount: number;
     finalTotal: number;
     perThousandEquation: string; // "A × B × C = Rate / 1k"
     totalChargeEquation: string; // "A × B × C × D = Total ETB"
@@ -21,7 +19,6 @@ export function calculatePriceFormula(
     originalRateInput?: number,
     rateMultiplierInput = 1,
     quantity = 1000,
-    discountPercent = 0,
     adminMarginInput = 90
 ): PriceFormulaResult {
     const resellerMultiplier = rateMultiplierInput > 0 ? rateMultiplierInput : 1;
@@ -41,8 +38,7 @@ export function calculatePriceFormula(
     const unitFactor = quantity / 1000;
     const unitPrice = finalRate / 1000;
     const subtotal = finalRate * unitFactor;
-    const discountAmount = discountPercent > 0 ? subtotal * (discountPercent / 100) : 0;
-    const finalTotal = subtotal - discountAmount;
+    const finalTotal = subtotal;
 
     // Un-densed singular equation: A × B × C
     const perThousandEquation = `${formatETB(providerRate)} × ${adminMargin.toFixed(2)}x (Admin: ${rawAdminMargin}) × ${resellerMultiplier.toFixed(2)}x (Reseller) = ${formatETB(finalRate)} / 1k`;
@@ -50,9 +46,7 @@ export function calculatePriceFormula(
     // Un-densed singular total equation: A × B × C × D
     const baseEquationStr = `${providerRate.toFixed(4)} × ${adminMargin.toFixed(2)} × ${resellerMultiplier.toFixed(2)} × (${quantity.toLocaleString()} ÷ 1000)`;
     
-    const totalChargeEquation = discountPercent > 0
-        ? `(${baseEquationStr}) - ${discountPercent}% = ${finalTotal.toFixed(4)} ETB`
-        : `${baseEquationStr} = ${finalTotal.toFixed(4)} ETB`;
+    const totalChargeEquation = `${baseEquationStr} = ${finalTotal.toFixed(4)} ETB`;
 
     return {
         providerRate,
@@ -63,10 +57,9 @@ export function calculatePriceFormula(
         unitPrice,
         quantity,
         subtotal,
-        discountPercent,
-        discountAmount,
         finalTotal,
         perThousandEquation,
         totalChargeEquation,
     };
 }
+

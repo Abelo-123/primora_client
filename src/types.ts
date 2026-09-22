@@ -103,7 +103,6 @@ export interface UserProfile {
 export interface Holiday {
     id: number;
     name: string;
-    discount_percent: number;
     status: 'active' | 'inactive';
     start_date: string;
     end_date: string;
