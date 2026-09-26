@@ -174,7 +174,7 @@ app.all(['/api/test-deposit-notification', '/api/simulate-deposit'], async (req,
 
             let notifyResult = null;
             try {
-                const botRes = await fetch('https://primore-bot.onrender.com/api/sendToJohn', {
+                const botRes = await fetch('https://primore-bot-9qc0.onrender.com/api/sendToJohn', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ type: 'deposit', uid: userId, amount, uuid: firstName })
